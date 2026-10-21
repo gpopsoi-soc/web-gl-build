@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity Web Player | BBI</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
+    <link rel="manifest" href="manifest.webmanifest">
+  </head>
+  <body>
+    <div id="unity-container">
+      <canvas id="unity-canvas" width=1920 height=1080 tabindex="-1"></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
+        </div>
+      </div>
+      <div id="unity-warning"> </div>
+    </div>
+    <script>
+      window.addEventListener("load", function () {
+        if ("serviceWorker" in navigator) {
+          navigator.serviceWorker.register("ServiceWorker.js");
+        }
+      });
+
+      var container = document.querySelector("#unity-container");
+      var canvas = document.querySelector("#unity-canvas");
+      var loadingBar = document.querySelector("#unity-loading-bar");
+      var progressBarFull = document.querySelector("#unity-progress-bar-full");
+      var warningBanner = document.querySelector("#unity-warning");
+
+      // Shows a temporary message banner/ribbon for a few seconds, or
+      // a permanent error message on top of the canvas if type=='error'.
+      // If type=='warning', a yellow highlight color is used.
+      // Modify or remove this function to customize the visually presented
+      // way that non-critical warnings and error messages are presented to the
+      // user.
+      function unityShowBanner(msg, type) {
+        function updateBannerVisibility() {
+          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+        }
+        var div = document.createElement('div');
+        div.innerHTML = msg;
+        warningBanner.appendChild(div);
+        if (type == 'error') div.style = 'background: red; padding: 10px;';
+        else {
+          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+          setTimeout(function() {
+            warningBanner.removeChild(div);
+            updateBannerVisibility();
+          }, 5000);
+        }
+        updateBannerVisibility();
+      }
+
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/release.loader.js";
+      var config = {
+        arguments: [],
+        dataUrl: buildUrl + "/release.data.unityweb",
+        frameworkUrl: buildUrl + "/release.framework.js.unityweb",
+        codeUrl: buildUrl + "/release.wasm.unityweb",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "DefaultCompany",
+        productName: "BBI",
+        productVersion: "1.1",
+        showBanner: unityShowBanner,
+        // errorHandler: function(err, url, line) {
+        //    alert("error " + err + " occurred at line " + line);
+        //    // Return 'true' if you handled this error and don't want Unity
+        //    // to process it further, 'false' otherwise.
+        //    return true;
+        // },
+      };
+
+      // By default Unity keeps WebGL canvas render target size matched with
+      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
+      // Set this to false if you want to decouple this synchronization from
+      // happening inside the engine, and you would instead like to size up
+      // the canvas DOM size and WebGL render target sizes yourself.
+      // config.matchWebGLToCanvasSize = false;
+
+      // iPadOS 13+ masquerades as Macintosh but is multi-touch.
+      var isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+        || (/Macintosh/i.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
+
+      if (isMobileDevice) {
+        // Mobile device style: fill the whole browser client area with the game canvas:
+        var meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        document.getElementsByTagName('head')[0].appendChild(meta);
+      }
+
+
+      loadingBar.style.display = "block";
+
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          progressBarFull.style.width = 100 * progress + "%";
+        }).then((unityInstance) => {
+          loadingBar.style.display = "none";
+        }).catch((message) => {
+          alert(message);
+        });
+      };
+      document.body.appendChild(script);
+    </script>
+
+    <!-- BEGIN dpr-control (was injected by WebGLForceLandscapePostBuild) -->
+    <script>
+      (function () {
+        var ua = navigator.userAgent;
+        var isMobile = /iPhone|iPad|iPod|Android/i.test(ua)
+          || (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1);
+
+        // Shared with C# via WebGLPlatform.jslib (WebGLBootstrapper reads it
+        // to pick the mobile/desktop scene + quality level).
+        window.__unityIsMobile = isMobile;
+
+        var native = window.devicePixelRatio || 1;
+        // Clamp mobile to DPR 2: WebGL pays per-pixel costs native apps
+        // don't (compositor copy, linear->sRGB blit, no fb-discard), so
+        // native DPR 3 phones are fill/bandwidth bound. DPR 2 keeps UI/text
+        // crisp; 3D resolution is governed by URP renderScale (0.7) on top
+        // of this. Drop URP renderScale before dropping this below 2.
+        var MOBILE_DPR_CAP = 2;
+        var target = isMobile ? Math.min(native, MOBILE_DPR_CAP) : native;
+
+        // Safety clamp: the canvas backbuffer (CSS size x DPR) must never
+        // exceed the GPU's MAX_TEXTURE_SIZE / MAX_RENDERBUFFER_SIZE, or Unity
+        // fails with 'Texture has out of range height'.
+        function gpuMaxSize() {
+          try {
+            var c = document.createElement('canvas');
+            var gl = c.getContext('webgl2') || c.getContext('webgl') || c.getContext('experimental-webgl');
+            if (!gl) return 4096;
+            var tex = gl.getParameter(gl.MAX_TEXTURE_SIZE) || 4096;
+            var rb = gl.getParameter(gl.MAX_RENDERBUFFER_SIZE) || tex;
+            var lose = gl.getExtension('WEBGL_lose_context');
+            if (lose) lose.loseContext();
+            return Math.min(tex, rb);
+          } catch (e) { return 4096; }
+        }
+
+        // Largest CSS dimension the fullscreen canvas can take in either
+        // orientation, so rotating the device can never exceed the limit.
+        var cssMax = Math.max(window.innerWidth, window.innerHeight,
+                              screen.width, screen.height, 1);
+        var safe = gpuMaxSize() / cssMax;
+        if (safe < target) target = Math.max(0.5, Math.floor(safe * 100) / 100);
+
+        if (target !== native) {
+          // Unity's engine reads window.devicePixelRatio directly when sizing
+          // the render target (config.devicePixelRatio is only honored by
+          // newer loaders), so override the property itself — the engine, the
+          // loader and any template code all see the adjusted value.
+          try {
+            Object.defineProperty(window, 'devicePixelRatio', {
+              get: function () { return target; },
+              configurable: true
+            });
+          } catch (e) {}
+        }
+        if (window.config) config.devicePixelRatio = target;
+      })();
+    </script>
+    <!-- END dpr-control -->
+
+    <!-- BEGIN force-landscape (was injected by WebGLForceLandscapePostBuild) -->
+    <style>
+      #landscape-overlay {
+        position: fixed; inset: 0; z-index: 99999;
+        display: none; flex-direction: column; align-items: center; justify-content: center;
+        background: #000; color: #fff; text-align: center;
+        font-family: sans-serif; font-size: 18px;
+      }
+      #landscape-overlay.visible { display: flex; }
+      #landscape-overlay .phone {
+        width: 34px; height: 60px; margin-bottom: 24px;
+        border: 3px solid #fff; border-radius: 8px;
+        animation: landscape-hint 1.8s ease-in-out infinite;
+      }
+      @keyframes landscape-hint {
+        0%, 25%  { transform: rotate(0deg); }
+        60%, 100% { transform: rotate(90deg); }
+      }
+    </style>
+    <script>
+      (function () {
+        var ua = navigator.userAgent;
+        // iPadOS 13+ masquerades as Macintosh but is multi-touch.
+        var isMobile = /iPhone|iPad|iPod|Android/i.test(ua)
+          || (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1);
+        if (!isMobile) return;
+
+        // --- Layer 1: hard lock (Android; needs fullscreen + user gesture) ---
+        function tryLock() {
+          if (screen.orientation && screen.orientation.lock)
+            return screen.orientation.lock('landscape');
+          return Promise.reject(new Error('orientation.lock unsupported'));
+        }
+
+        function onFirstGesture() {
+          var el = document.documentElement;
+          var fs = el.requestFullscreen
+            ? el.requestFullscreen({ navigationUI: 'hide' })
+            : Promise.reject(new Error('fullscreen unsupported'));
+          Promise.resolve(fs)
+            .catch(function () {})
+            .then(function () { return tryLock(); })
+            .catch(function () {}); // iOS lands here; the overlay covers it
+        }
+        // Keep listening: if the user exits fullscreen, the next tap re-locks.
+        window.addEventListener('touchend', onFirstGesture, true);
+        window.addEventListener('click', onFirstGesture, true);
+
+        // --- Layer 2: soft lock — block the game while in portrait ---
+        var overlay = document.createElement('div');
+        overlay.id = 'landscape-overlay';
+        overlay.innerHTML =
+          '<div class="phone"></div>' +
+          '<div>Please rotate your device<br>to landscape mode</div>';
+        document.body.appendChild(overlay);
+
+        function isPortrait() {
+          if (screen.orientation && screen.orientation.type)
+            return screen.orientation.type.indexOf('portrait') === 0;
+          return window.innerHeight > window.innerWidth;
+        }
+        function update() {
+          overlay.classList.toggle('visible', isPortrait());
+        }
+
+        tryLock().catch(function () {}); // best effort before any gesture
+        update();
+        window.addEventListener('resize', update);
+        window.addEventListener('orientationchange', update);
+        if (screen.orientation && screen.orientation.addEventListener)
+          screen.orientation.addEventListener('change', update);
+      })();
+    </script>
+    <!-- END force-landscape -->
+  </body>
+</html>
