@@ -1,10 +1,11 @@
-const cacheName = "DefaultCompany-BBI-1.1-660b1df0e01bf55b3d12aefc308a60db.data";
-const persistentCachePrefixes = ["UnityCache_", "bbi-agent-bundles-"];
+const cacheName = "DefaultCompany-BBI-1.1-1b546f3c95fe117a6bf52f615bdf49e0.data.unityweb";
+const agentBundleCachePrefix = "bbi-agent-bundles-";
+const persistentCachePrefixes = ["UnityCache_", agentBundleCachePrefix];
 const contentToCache = [
-    "Build/d0946a25cfad885b321dea79d2eb8592.loader.js",
-    "Build/20e92424f7af05aaead674a5f0e09e9f.framework.js",
-    "Build/660b1df0e01bf55b3d12aefc308a60db.data",
-    "Build/48231bf49dcbe384c5ba4259691f1330.wasm",
+    "Build/d295a8accc3009137a5adfe6e5e385c2.loader.js",
+    "Build/5d7a5f83fcb1d365c784abcb5593b75a.framework.js.unityweb",
+    "Build/1b546f3c95fe117a6bf52f615bdf49e0.data.unityweb",
+    "Build/2d248498c3974cc100887fa3dc179027.wasm.unityweb",
     "TemplateData/style.css"
 
 ];
@@ -33,6 +34,19 @@ function isStaleCache(name) {
     return !persistentCachePrefixes.some(function (prefix) { return name.indexOf(prefix) === 0; });
 }
 
+async function matchOwnedCaches(request) {
+    const appShellHit = await (await caches.open(cacheName)).match(request);
+    if (appShellHit) { return appShellHit; }
+
+    const names = await caches.keys();
+    for (const name of names) {
+        if (name.indexOf(agentBundleCachePrefix) !== 0) { continue; }
+        const agentBundleHit = await (await caches.open(name)).match(request);
+        if (agentBundleHit) { return agentBundleHit; }
+    }
+    return undefined;
+}
+
 function isCacheableResponse(request, response) {
     return response.ok && !new URL(request.url).pathname.endsWith('.bundle');
 }
@@ -41,7 +55,7 @@ self.addEventListener('fetch', function (e) {
     if (e.request.method !== 'GET' || new URL(e.request.url).origin !== self.location.origin) { return; }
 
     e.respondWith((async function () {
-      let response = await caches.match(e.request);
+      let response = await matchOwnedCaches(e.request);
       if (response) { return response; }
 
       response = await fetch(e.request);
