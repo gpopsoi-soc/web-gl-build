@@ -57,17 +57,28 @@
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/release.loader.js";
+      var loaderUrl = buildUrl + "/d0946a25cfad885b321dea79d2eb8592.loader.js";
       var config = {
         arguments: [],
-        dataUrl: buildUrl + "/release.data.unityweb",
-        frameworkUrl: buildUrl + "/release.framework.js.unityweb",
-        codeUrl: buildUrl + "/release.wasm.unityweb",
+        dataUrl: buildUrl + "/660b1df0e01bf55b3d12aefc308a60db.data",
+        frameworkUrl: buildUrl + "/20e92424f7af05aaead674a5f0e09e9f.framework.js",
+        codeUrl: buildUrl + "/48231bf49dcbe384c5ba4259691f1330.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "BBI",
         productVersion: "1.1",
         showBanner: unityShowBanner,
+        cacheControl: function (url) {
+          var agentBundles = window.__bbiManagedBundleUrls;
+          var isServedByWorker = navigator.serviceWorker && navigator.serviceWorker.controller;
+          if (isServedByWorker && agentBundles && agentBundles[new URL(url, window.location.href).href]) {
+            return "no-store";
+          }
+          if (url.match(/\.data/) || url.match(/\.bundle/)) {
+            return "must-revalidate";
+          }
+          return "no-store";
+        },
         // errorHandler: function(err, url, line) {
         //    alert("error " + err + " occurred at line " + line);
         //    // Return 'true' if you handled this error and don't want Unity
@@ -172,7 +183,7 @@
     </script>
     <!-- END dpr-control -->
 
-    <!-- BEGIN force-landscape (was injected by WebGLForceLandscapePostBuild) -->
+    <!-- BEGIN require-landscape (was injected by WebGLForceLandscapePostBuild) -->
     <style>
       #landscape-overlay {
         position: fixed; inset: 0; z-index: 99999;
@@ -199,28 +210,19 @@
           || (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1);
         if (!isMobile) return;
 
-        // --- Layer 1: hard lock (Android; needs fullscreen + user gesture) ---
-        function tryLock() {
-          if (screen.orientation && screen.orientation.lock)
-            return screen.orientation.lock('landscape');
-          return Promise.reject(new Error('orientation.lock unsupported'));
-        }
-
+        // --- Layer 1: fullscreen on first gesture (hides browser bars) ---
+        // No screen.orientation.lock: it rotates the picture sideways while the
+        // phone is still held upright. The player must physically rotate instead.
         function onFirstGesture() {
           var el = document.documentElement;
-          var fs = el.requestFullscreen
-            ? el.requestFullscreen({ navigationUI: 'hide' })
-            : Promise.reject(new Error('fullscreen unsupported'));
-          Promise.resolve(fs)
-            .catch(function () {})
-            .then(function () { return tryLock(); })
-            .catch(function () {}); // iOS lands here; the overlay covers it
+          if (document.fullscreenElement || !el.requestFullscreen) return;
+          Promise.resolve(el.requestFullscreen({ navigationUI: 'hide' })).catch(function () {});
         }
-        // Keep listening: if the user exits fullscreen, the next tap re-locks.
+        // Keep listening: if the user exits fullscreen, the next tap re-enters it.
         window.addEventListener('touchend', onFirstGesture, true);
         window.addEventListener('click', onFirstGesture, true);
 
-        // --- Layer 2: soft lock — block the game while in portrait ---
+        // --- Layer 2: block the game while in portrait ---
         var overlay = document.createElement('div');
         overlay.id = 'landscape-overlay';
         overlay.innerHTML =
@@ -237,7 +239,6 @@
           overlay.classList.toggle('visible', isPortrait());
         }
 
-        tryLock().catch(function () {}); // best effort before any gesture
         update();
         window.addEventListener('resize', update);
         window.addEventListener('orientationchange', update);
@@ -245,6 +246,6 @@
           screen.orientation.addEventListener('change', update);
       })();
     </script>
-    <!-- END force-landscape -->
+    <!-- END require-landscape -->
   </body>
 </html>
