@@ -1,11 +1,11 @@
-const cacheName = "DefaultCompany-BBI-1.1-1b546f3c95fe117a6bf52f615bdf49e0.data.unityweb";
+const cacheName = "DefaultCompany-BBI-1.1-6db1497a87e6ea044c6f725bf0cccb7e.data.unityweb";
 const agentBundleCachePrefix = "bbi-agent-bundles-";
 const persistentCachePrefixes = ["UnityCache_", agentBundleCachePrefix];
 const contentToCache = [
-    "Build/d295a8accc3009137a5adfe6e5e385c2.loader.js",
+    "Build/4c1e06f2195aaf0a80582b084bfd4c86.loader.js",
     "Build/5d7a5f83fcb1d365c784abcb5593b75a.framework.js.unityweb",
-    "Build/1b546f3c95fe117a6bf52f615bdf49e0.data.unityweb",
-    "Build/2d248498c3974cc100887fa3dc179027.wasm.unityweb",
+    "Build/6db1497a87e6ea044c6f725bf0cccb7e.data.unityweb",
+    "Build/750af60518d9157bfa296e08a5ab15f2.wasm.unityweb",
     "TemplateData/style.css"
 
 ];
@@ -47,22 +47,54 @@ async function matchOwnedCaches(request) {
     return undefined;
 }
 
+const contentHashPattern = /[0-9a-f]{32}/;
+const versionFileName = "version.json";
+
+function isImmutableUrl(url) {
+    return contentHashPattern.test(new URL(url).pathname);
+}
+
 function isCacheableResponse(request, response) {
-    return response.ok && !new URL(request.url).pathname.endsWith('.bundle');
+    const pathname = new URL(request.url).pathname;
+    return response.ok && !pathname.endsWith('.bundle') && !pathname.endsWith(versionFileName);
+}
+
+function storeIfCacheable(request, response) {
+    if (!isCacheableResponse(request, response)) { return; }
+    const copy = response.clone();
+    caches.open(cacheName).then(function (cache) { return cache.put(request, copy); }).catch(function () {});
+}
+
+function revalidatingRequest(request) {
+    if (request.mode === 'navigate') {
+        return new Request(request.url, { cache: 'no-cache', credentials: 'same-origin' });
+    }
+    return new Request(request, { cache: 'no-cache' });
+}
+
+async function cacheFirst(request) {
+    const cached = await matchOwnedCaches(request);
+    if (cached) { return cached; }
+
+    const response = await fetch(request);
+    storeIfCacheable(request, response);
+    return response;
+}
+
+async function networkFirst(request) {
+    try {
+        const response = await fetch(revalidatingRequest(request));
+        storeIfCacheable(request, response);
+        return response;
+    } catch (error) {
+        const cached = await matchOwnedCaches(request);
+        if (cached) { return cached; }
+        throw error;
+    }
 }
 
 self.addEventListener('fetch', function (e) {
     if (e.request.method !== 'GET' || new URL(e.request.url).origin !== self.location.origin) { return; }
 
-    e.respondWith((async function () {
-      let response = await matchOwnedCaches(e.request);
-      if (response) { return response; }
-
-      response = await fetch(e.request);
-      if (isCacheableResponse(e.request, response)) {
-        const cache = await caches.open(cacheName);
-        cache.put(e.request, response.clone()).catch(function () {});
-      }
-      return response;
-    })());
+    e.respondWith(isImmutableUrl(e.request.url) ? cacheFirst(e.request) : networkFirst(e.request));
 });
