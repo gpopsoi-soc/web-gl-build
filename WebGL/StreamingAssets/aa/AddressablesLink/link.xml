@@ -105,6 +105,11 @@
     <type fullname="UnityEngine.AddressableAssets.AssetLabelReference" preserve="nothing" serialized="true" />
     <type fullname="UnityEngine.AddressableAssets.AssetReferenceGameObject" preserve="nothing" serialized="true" />
   </assembly>
+  <assembly fullname="Unity.InferenceEngine, Version=2.6.1.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="Unity.InferenceEngine.ModelAsset" preserve="all" />
+    <type fullname="Unity.InferenceEngine.ModelAssetData" preserve="all" />
+    <type fullname="Unity.InferenceEngine.ModelAssetWeightsData" preserve="all" />
+  </assembly>
   <assembly fullname="Unity.InputSystem, Version=1.19.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEngine.InputSystem.InputActionAsset" preserve="all" />
     <type fullname="UnityEngine.InputSystem.InputActionReference" preserve="all" />

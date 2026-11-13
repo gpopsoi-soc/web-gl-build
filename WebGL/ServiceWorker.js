@@ -1,11 +1,11 @@
-const cacheName = "DefaultCompany-BBI-1.1-27dfe7ccade79de09691082b093e3f55.data.unityweb";
+const cacheName = "DefaultCompany-BBI-1.1-bd61cd4a9c0bd639159801239dfab119.data.unityweb";
 const agentBundleCachePrefix = "bbi-agent-bundles-";
 const persistentCachePrefixes = ["UnityCache_", agentBundleCachePrefix];
 const contentToCache = [
-    "Build/59634383352f1c4fa339419424318bc8.loader.js",
-    "Build/af3b12fccd507e80dcc28fa89ed9c297.framework.js.unityweb",
-    "Build/27dfe7ccade79de09691082b093e3f55.data.unityweb",
-    "Build/f34ab6a050ceeb8f9c79e76a9f3d999f.wasm.unityweb",
+    "Build/4873beab9e13bd26927e3c1f2d0dde48.loader.js",
+    "Build/91eb0b87a27eeb733a3ff409233d1faf.framework.js.unityweb",
+    "Build/bd61cd4a9c0bd639159801239dfab119.data.unityweb",
+    "Build/c093db9702459ea28fa72ae59011234f.wasm.unityweb",
     "TemplateData/style.css"
 
 ];
