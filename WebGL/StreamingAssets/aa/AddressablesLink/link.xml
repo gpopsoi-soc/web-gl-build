@@ -3,6 +3,7 @@
     <type fullname="Agents.AgentModelLoader" preserve="all" />
     <type fullname="Agents.AgentModelProvider" preserve="all" />
     <type fullname="Agents.AgentModelView" preserve="all" />
+    <type fullname="Agents.AgentTurnToPlayer" preserve="all" />
     <type fullname="Agents.SelectAgentModelButton" preserve="all" />
     <type fullname="Agents.SelectModelView" preserve="all" />
     <type fullname="AIResponseMonitor" preserve="all" />
@@ -29,6 +30,8 @@
     <type fullname="StreamingDialogModule.Data.InterviewJobDescription" preserve="all" />
     <type fullname="StreamingDialogModule.Debugging.QuizDebugController" preserve="all" />
     <type fullname="StreamingDialogModule.Orchestration.StreamingAgentManager" preserve="all" />
+    <type fullname="StreamingDialogModule.Panel.InterviewPanelController" preserve="all" />
+    <type fullname="StreamingDialogModule.Panel.InterviewPanelServerSync" preserve="all" />
     <type fullname="StreamingDialogModule.UI.StreamingAgentSelectionUI" preserve="all" />
     <type fullname="StreamingDialogModule.UI.StreamingAgentStatusUI" preserve="all" />
     <type fullname="StreamingDialogModule.UI.StreamingInterviewJdSelectionUI" preserve="all" />
@@ -45,12 +48,16 @@
     <type fullname="StreamingDialogModule.UI.UIAnimator" preserve="all" />
     <type fullname="ToggleImageSwitcher" preserve="all" />
     <type fullname="UI.Layout.AnimatedContentSizeFitter" preserve="all" />
-    <type fullname="UI.Layout.RectTopAttachment" preserve="all" />
+    <type fullname="UI.Layout.RectTransformAboveFollower" preserve="all" />
+    <type fullname="UI.Layout.ScrollViewportLineClamp" preserve="all" />
     <type fullname="UI.LoadingSpinner" preserve="all" />
     <type fullname="UI.RectTransformAutoExpander" preserve="all" />
     <type fullname="UI.RectTransformVerticalCenterFollower" preserve="all" />
     <type fullname="VoiceMuteOverlayUI" preserve="all" />
     <type fullname="WebGL.AgentCharacters.WebGLCharacterOptimizer" preserve="all" />
+    <type fullname="WebGL.Boot.Launch.WebGLLaunchAgentStarter" preserve="all" />
+    <type fullname="WebGL.Movement.VirtualJoystick" preserve="all" />
+    <type fullname="WebGL.Movement.WebGLPlayerMover" preserve="all" />
     <type fullname="XrhmdMouseLook" preserve="all" />
     <type fullname="Agents.AgentModelEntry" preserve="nothing" serialized="true" />
     <type fullname="Localization.LanguageOption" preserve="nothing" serialized="true" />
@@ -63,6 +70,9 @@
     <type fullname="StreamingDialogModule.Dto.Ws.InterviewOpeningInfo" preserve="nothing" serialized="true" />
     <type fullname="StreamingDialogModule.Dto.Ws.InterviewQuestionUpdate" preserve="nothing" serialized="true" />
     <type fullname="StreamingDialogModule.Dto.Ws.InterviewResultUpdate" preserve="nothing" serialized="true" />
+    <type fullname="StreamingDialogModule.Panel.InterviewPanelController/AvatarBinding" preserve="nothing" serialized="true" />
+    <type fullname="StreamingDialogModule.Panel.InterviewPanelController/EnvironmentBinding" preserve="nothing" serialized="true" />
+    <type fullname="StreamingDialogModule.Panel.InterviewPanelController/RoomSeats" preserve="nothing" serialized="true" />
   </assembly>
   <assembly fullname="RTLTMPro, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="RTLTMPro.RTLTextMeshPro" preserve="all" />
@@ -236,6 +246,7 @@
     <type fullname="UnityEngine.BoxCollider" preserve="all" />
     <type fullname="UnityEngine.CapsuleCollider" preserve="all" />
     <type fullname="UnityEngine.MeshCollider" preserve="all" />
+    <type fullname="UnityEngine.Rigidbody" preserve="all" />
   </assembly>
   <assembly fullname="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEngine.Font" preserve="all" />
