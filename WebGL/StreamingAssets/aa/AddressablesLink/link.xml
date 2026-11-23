@@ -1,13 +1,20 @@
 <linker>
   <assembly fullname="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="Agents.AgentGestures" preserve="all" />
     <type fullname="Agents.AgentModelLoader" preserve="all" />
     <type fullname="Agents.AgentModelProvider" preserve="all" />
     <type fullname="Agents.AgentModelView" preserve="all" />
     <type fullname="Agents.AgentTurnToPlayer" preserve="all" />
+    <type fullname="Agents.AnimatorSitBlendShape" preserve="all" />
+    <type fullname="Agents.FaceBlendShapeFollower" preserve="all" />
+    <type fullname="Agents.RandomAnimatorParameter" preserve="all" />
     <type fullname="Agents.SelectAgentModelButton" preserve="all" />
     <type fullname="Agents.SelectModelView" preserve="all" />
+    <type fullname="Agents.SpeakingStyleFace" preserve="all" />
+    <type fullname="Agents.SpeechFaceMotion" preserve="all" />
     <type fullname="AIResponseMonitor" preserve="all" />
     <type fullname="AudioMuteManager" preserve="all" />
+    <type fullname="CameraFovAspectClamp" preserve="all" />
     <type fullname="ClickBurstEffect" preserve="all" />
     <type fullname="Debugging.ButtonDebug" preserve="all" />
     <type fullname="Debugging.ToggleDebug" preserve="all" />
@@ -23,6 +30,7 @@
     <type fullname="StreamingDialogModule.Agents.StreamingInterviewWsAgent" preserve="all" />
     <type fullname="StreamingDialogModule.Agents.StreamingQuizAgent" preserve="all" />
     <type fullname="StreamingDialogModule.Agents.StreamingTeacherAgent" preserve="all" />
+    <type fullname="StreamingDialogModule.Attention.AttentionReportTracker" preserve="all" />
     <type fullname="StreamingDialogModule.Attention.AttentionTarget" preserve="all" />
     <type fullname="StreamingDialogModule.Attention.PlayerAttentionMonitor" preserve="all" />
     <type fullname="StreamingDialogModule.Attention.StreamingAttentionPromptController" preserve="all" />
@@ -32,6 +40,7 @@
     <type fullname="StreamingDialogModule.Orchestration.StreamingAgentManager" preserve="all" />
     <type fullname="StreamingDialogModule.Panel.InterviewPanelController" preserve="all" />
     <type fullname="StreamingDialogModule.Panel.InterviewPanelServerSync" preserve="all" />
+    <type fullname="StreamingDialogModule.Staging.AgentLaunchStaging" preserve="all" />
     <type fullname="StreamingDialogModule.UI.StreamingAgentSelectionUI" preserve="all" />
     <type fullname="StreamingDialogModule.UI.StreamingAgentStatusUI" preserve="all" />
     <type fullname="StreamingDialogModule.UI.StreamingInterviewJdSelectionUI" preserve="all" />
@@ -40,6 +49,7 @@
     <type fullname="StreamingDialogModule.UI.StreamingInterviewWsResultsUI" preserve="all" />
     <type fullname="StreamingDialogModule.UI.StreamingLectureSelectionUI" preserve="all" />
     <type fullname="StreamingDialogModule.UI.StreamingPauseUI" preserve="all" />
+    <type fullname="StreamingDialogModule.UI.StreamingPostureOverlayUI" preserve="all" />
     <type fullname="StreamingDialogModule.UI.StreamingQuizResultsUI" preserve="all" />
     <type fullname="StreamingDialogModule.UI.StreamingResponseMetricsUI" preserve="all" />
     <type fullname="StreamingDialogModule.UI.StreamingSubtitleUI" preserve="all" />
@@ -56,6 +66,7 @@
     <type fullname="VoiceMuteOverlayUI" preserve="all" />
     <type fullname="WebGL.AgentCharacters.WebGLCharacterOptimizer" preserve="all" />
     <type fullname="WebGL.Boot.Launch.WebGLLaunchAgentStarter" preserve="all" />
+    <type fullname="WebGL.Boot.Launch.WebSessionLaunchClient" preserve="all" />
     <type fullname="WebGL.Movement.VirtualJoystick" preserve="all" />
     <type fullname="WebGL.Movement.WebGLPlayerMover" preserve="all" />
     <type fullname="XrhmdMouseLook" preserve="all" />
@@ -73,6 +84,12 @@
     <type fullname="StreamingDialogModule.Panel.InterviewPanelController/AvatarBinding" preserve="nothing" serialized="true" />
     <type fullname="StreamingDialogModule.Panel.InterviewPanelController/EnvironmentBinding" preserve="nothing" serialized="true" />
     <type fullname="StreamingDialogModule.Panel.InterviewPanelController/RoomSeats" preserve="nothing" serialized="true" />
+    <type fullname="StreamingDialogModule.Staging.AgentLaunchStaging/AgentDefault" preserve="nothing" serialized="true" />
+    <type fullname="StreamingDialogModule.Staging.AgentLaunchStaging/AvatarEntry" preserve="nothing" serialized="true" />
+    <type fullname="StreamingDialogModule.Staging.AgentLaunchStaging/EnvironmentEntry" preserve="nothing" serialized="true" />
+    <type fullname="StreamingDialogModule.Staging.AgentLaunchStaging/PlayerSeat" preserve="nothing" serialized="true" />
+    <type fullname="StreamingDialogModule.Staging.AgentLaunchStaging/Seat" preserve="nothing" serialized="true" />
+    <type fullname="Agents.SpeakingStyleFace/StyleEmote" preserve="nothing" serialized="true" />
   </assembly>
   <assembly fullname="RTLTMPro, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="RTLTMPro.RTLTextMeshPro" preserve="all" />
@@ -109,6 +126,10 @@
     <type fullname="Reallusion.Runtime.BoneDriver/UpdateMode" preserve="nothing" serialized="true" />
     <type fullname="Reallusion.Runtime.WrinkleConfig" preserve="nothing" serialized="true" />
     <type fullname="Reallusion.Runtime.WrinkleRuleSet" preserve="nothing" serialized="true" />
+  </assembly>
+  <assembly fullname="soupday.cc3_unity_tools.runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="Reallusion.Import.WeightMapper" preserve="all" />
+    <type fullname="Reallusion.Import.WeightMapper/PhysicsSettings" preserve="nothing" serialized="true" />
   </assembly>
   <assembly fullname="Unity.Addressables, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all">
     <type fullname="UnityEngine.AddressableAssets.Addressables" preserve="all" />
@@ -207,6 +228,9 @@
     <type fullname="UnityEngine.AudioClip" preserve="all" />
     <type fullname="UnityEngine.AudioListener" preserve="all" />
     <type fullname="UnityEngine.AudioSource" preserve="all" />
+  </assembly>
+  <assembly fullname="UnityEngine.ClothModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.Cloth" preserve="all" />
   </assembly>
   <assembly fullname="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <type fullname="UnityEngine.Camera" preserve="all" />

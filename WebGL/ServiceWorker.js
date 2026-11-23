@@ -1,11 +1,11 @@
-const cacheName = "DefaultCompany-BBI-1.1-36f9e696cf653e9f1effb3728cf46bf6.data.unityweb";
+const cacheName = "DefaultCompany-BBI-1.1-9f893815e63add1804118bbcc2106e56.data.unityweb";
 const agentBundleCachePrefix = "bbi-agent-bundles-";
 const persistentCachePrefixes = ["UnityCache_", agentBundleCachePrefix];
 const contentToCache = [
-    "Build/4bfcfd068db61c2289d337c96ebf26e4.loader.js",
-    "Build/6000011e6310029eea600bf8175601d2.framework.js.unityweb",
-    "Build/36f9e696cf653e9f1effb3728cf46bf6.data.unityweb",
-    "Build/55c09c6d721f139b4fbab71309287198.wasm.unityweb",
+    "Build/851e01ac8ad0b601990826ab82ce261c.loader.js",
+    "Build/3a0d567463b117b8a02fff00ff72bb2b.framework.js.unityweb",
+    "Build/9f893815e63add1804118bbcc2106e56.data.unityweb",
+    "Build/9e4ed50c0306b355697b584491905bea.wasm.unityweb",
     "TemplateData/style.css"
 
 ];
@@ -48,6 +48,11 @@ async function matchOwnedCaches(request) {
 }
 
 const contentHashPattern = /[0-9a-f]{32}/;
+const agentApiPattern = /\/api\/(teacher|quiz|interview|career)\/(lectures|healthz|teacher|quiz|interview|advisor|upload|profile|stt)(\/|$)/;
+
+function isAgentApiUrl(url) {
+    return agentApiPattern.test(new URL(url).pathname);
+}
 const versionFileName = "version.json";
 
 function isImmutableUrl(url) {
@@ -95,6 +100,7 @@ async function networkFirst(request) {
 
 self.addEventListener('fetch', function (e) {
     if (e.request.method !== 'GET' || new URL(e.request.url).origin !== self.location.origin) { return; }
+    if (isAgentApiUrl(e.request.url)) { return; }
 
     e.respondWith(isImmutableUrl(e.request.url) ? cacheFirst(e.request) : networkFirst(e.request));
 });
